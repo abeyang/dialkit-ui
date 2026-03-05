@@ -38,10 +38,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup && svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
-    "build:svelte": "svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
+    "build": "tsup && node scripts/gen-theme-css.js && svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
+    "build:svelte": "node scripts/gen-theme-css.js && svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.solid.json && svelte-check --tsconfig tsconfig.svelte.json"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.solid.json && node scripts/gen-theme-css.js && svelte-check --tsconfig tsconfig.svelte.json"
   },
   "peerDependencies": {
     "motion": ">=11.0.0",

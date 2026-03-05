@@ -1,6 +1,7 @@
 <script lang="ts">
   import { DialStore } from '../../store/DialStore';
   import type { PanelConfig } from '../../store/DialStore';
+  import { themeCSS } from '../theme-css';
   import Portal from '../Portal.svelte';
   import Panel from './Panel.svelte';
 
@@ -13,6 +14,17 @@
 
   let panels = $state<PanelConfig[]>([]);
   let mounted = $state(false);
+
+  $effect(() => {
+    if (typeof document === 'undefined') return;
+    const id = 'dialkit-theme';
+    if (!document.getElementById(id)) {
+      const style = document.createElement('style');
+      style.id = id;
+      style.textContent = themeCSS;
+      document.head.appendChild(style);
+    }
+  });
 
   $effect(() => {
     if (typeof window === 'undefined') return;

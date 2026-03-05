@@ -392,7 +392,6 @@ npm install dialkit
 <!-- +layout.svelte -->
 <script>
   import { DialRoot } from 'dialkit/svelte';
-  import 'dialkit/styles.css';
 </script>
 
 <slot />
@@ -417,7 +416,7 @@ npm install dialkit
 </div>
 ```
 
-Use `$params` to read the live values reactively. Control types, presets, folders, and transitions match the React/Solid entries.
+`createDialKit` returns a reactive object — access values via `params.current`. Styles are injected automatically by `DialRoot` (no CSS import needed). Cleanup is automatic when the component unmounts. All control types, presets, folders, and transitions match the React/Solid entries.
 
 ---
 
