@@ -1,6 +1,6 @@
 // Core API
-export { createDialKit, DialKitStore } from './createDialKit.svelte';
-export type { CreateDialOptions } from './createDialKit.svelte';
+export { createDialKit } from './createDialKit.svelte';
+export type { CreateDialOptions, DialKitValues } from './createDialKit.svelte';
 
 // Root component
 export { default as DialRoot } from './components/DialRoot.svelte';

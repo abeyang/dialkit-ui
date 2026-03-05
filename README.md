@@ -382,7 +382,7 @@ function Card() {
 
 ## Svelte
 
-DialKit also works with Svelte 5. Import from `dialkit/svelte` — the API mirrors the Solid version and `createDialKit` returns a readable store.
+DialKit works with Svelte 5 (≥5.8.0). Import from `dialkit/svelte` — no extra dependencies needed.
 
 ```bash
 npm install dialkit
@@ -412,7 +412,7 @@ npm install dialkit
   });
 </script>
 
-<div style:filter={`blur(${$params.blur}px)`} style:color={$params.color}>
+<div style:filter={`blur(${params.current.blur}px)`} style:color={params.current.color}>
   ...
 </div>
 ```

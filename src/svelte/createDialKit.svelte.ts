@@ -15,28 +15,8 @@ export interface CreateDialOptions {
   onAction?: (action: string) => void;
 }
 
-export class DialKitStore<T> {
-  #value: T;
-  #listeners = new Set<(value: T) => void>();
-
-  constructor(initial: T) {
-    this.#value = initial;
-  }
-
-  get current(): T {
-    return this.#value;
-  }
-
-  subscribe(fn: (value: T) => void): () => void {
-    fn(this.#value);
-    this.#listeners.add(fn);
-    return () => this.#listeners.delete(fn);
-  }
-
-  _set(value: T) {
-    this.#value = value;
-    for (const fn of this.#listeners) fn(value);
-  }
+export interface DialKitValues<T> {
+  readonly current: T;
 }
 
 let dialKitInstance = 0;
@@ -45,44 +25,34 @@ export function createDialKit<T extends DialConfig>(
   name: string,
   config: T,
   options?: CreateDialOptions
-): DialKitStore<ResolvedValues<T>> {
+): DialKitValues<ResolvedValues<T>> {
   const panelId = `${name}-${++dialKitInstance}`;
-  const resolved = () => buildResolvedValues(config, DialStore.getValues(panelId), '') as ResolvedValues<T>;
+  const resolve = () => buildResolvedValues(config, DialStore.getValues(panelId), '') as ResolvedValues<T>;
 
-  const store = new DialKitStore<ResolvedValues<T>>(resolved());
+  let values = $state<ResolvedValues<T>>(resolve());
 
-  DialStore.registerPanel(panelId, name, config);
-  store._set(resolved());
+  $effect(() => {
+    DialStore.registerPanel(panelId, name, config);
+    values = resolve();
 
-  const unsubValues = DialStore.subscribe(panelId, () => {
-    store._set(resolved());
+    const unsubValues = DialStore.subscribe(panelId, () => {
+      values = resolve();
+    });
+
+    const unsubActions = options?.onAction
+      ? DialStore.subscribeActions(panelId, options.onAction)
+      : undefined;
+
+    return () => {
+      unsubValues();
+      unsubActions?.();
+      DialStore.unregisterPanel(panelId);
+    };
   });
 
-  const unsubActions = options?.onAction
-    ? DialStore.subscribeActions(panelId, options.onAction)
-    : undefined;
-
-  // Return a store that cleans up when all subscribers are gone
-  // For SSR safety, we rely on the consumer's component lifecycle
-  // to handle cleanup via $effect or onDestroy
-  const originalSubscribe = store.subscribe.bind(store);
-  let subscriberCount = 0;
-
-  store.subscribe = (fn: (value: ResolvedValues<T>) => void) => {
-    subscriberCount++;
-    const unsub = originalSubscribe(fn);
-    return () => {
-      unsub();
-      subscriberCount--;
-      if (subscriberCount === 0) {
-        unsubValues();
-        unsubActions?.();
-        DialStore.unregisterPanel(panelId);
-      }
-    };
+  return {
+    get current() { return values; },
   };
-
-  return store;
 }
 
 function buildResolvedValues(
