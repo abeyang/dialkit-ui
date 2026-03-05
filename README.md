@@ -1,6 +1,6 @@
 # dialkit
 
-Real-time parameter tweaking for React and Solid.
+Real-time parameter tweaking for React, Solid, and Svelte.
 
 ## Quick Start
 
@@ -377,6 +377,47 @@ function Card() {
 ```
 
 `createDialKit` returns an accessor — call `params()` to read the current values. All control types, config shapes, and panel features (presets, copy, folders) work identically to the React version.
+
+---
+
+## Svelte
+
+DialKit also works with Svelte 5. Import from `dialkit/svelte` — the API mirrors the Solid version and `createDialKit` returns a readable store.
+
+```bash
+npm install dialkit
+```
+
+```svelte
+<!-- +layout.svelte -->
+<script>
+  import { DialRoot } from 'dialkit/svelte';
+  import 'dialkit/styles.css';
+</script>
+
+<slot />
+<DialRoot />
+```
+
+```svelte
+<!-- Card.svelte -->
+<script>
+  import { createDialKit } from 'dialkit/svelte';
+
+  const params = createDialKit('Card', {
+    blur: [24, 0, 100],
+    scale: 1.2,
+    color: '#ff5500',
+    visible: true
+  });
+</script>
+
+<div style:filter={`blur(${$params.blur}px)`} style:color={$params.color}>
+  ...
+</div>
+```
+
+Use `$params` to read the live values reactively. Control types, presets, folders, and transitions match the React/Solid entries.
 
 ---
 

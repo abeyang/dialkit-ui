@@ -3,6 +3,11 @@ node_modules/
 
 # Build output (regenerated on install)
 dist/
+.svelte-kit/
+
+# Generated declaration artifacts from svelte-package
+src/store/DialStore.d.ts
+src/store/DialStore.d.ts.map
 
 # Example/demo (lives on personal site)
 example/

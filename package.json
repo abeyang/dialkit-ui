@@ -1,7 +1,7 @@
 {
   "name": "dialkit",
   "version": "1.0.0",
-  "description": "Real-time parameter tweaking for React and Solid apps",
+  "description": "Real-time parameter tweaking for React, Solid, and Svelte apps",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -27,21 +27,28 @@
         "default": "./dist/solid/index.cjs"
       }
     },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
+      "default": "./dist/svelte/index.js"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
+    "build:svelte": "svelte-package -i src/svelte -o dist/svelte && rm -rf .svelte-kit src/store/DialStore.d.ts src/store/DialStore.d.ts.map",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.solid.json"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.solid.json && svelte-check --tsconfig tsconfig.svelte.json"
   },
   "peerDependencies": {
     "motion": ">=11.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
-    "solid-js": ">=1.6.0"
+    "solid-js": ">=1.6.0",
+    "svelte": ">=5.8.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -52,9 +59,13 @@
     },
     "solid-js": {
       "optional": true
+    },
+    "svelte": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@sveltejs/package": "^2.4.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "esbuild-plugin-solid": "^0.6.0",
@@ -62,6 +73,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "solid-js": "^1.9.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.3.0"
   },
@@ -69,6 +82,7 @@
     "react",
     "solid",
     "solidjs",
+    "svelte",
     "animation",
     "tweaking",
     "parameters",
