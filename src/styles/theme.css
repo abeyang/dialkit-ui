@@ -1093,3 +1093,71 @@
   height: 14px;
   color: var(--dial-text-label);
 }
+
+/* Choice Grid */
+.dialkit-choice-grid-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 10px 10px;
+  background: var(--dial-surface);
+  border-radius: var(--dial-radius);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialkit-choice-grid-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dial-text-label);
+  padding: 0 2px 6px;
+  user-select: none;
+}
+
+.dialkit-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: 100%;
+}
+
+.dialkit-choice-grid-button {
+  position: relative;
+  height: var(--dial-row-height);
+  border-radius: calc(var(--dial-radius) - 2px);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  outline: none;
+  overflow: visible;
+}
+
+.dialkit-choice-grid-pill {
+  position: absolute;
+  inset: 0;
+  background: var(--dial-surface-active);
+  border-radius: calc(var(--dial-radius) - 2px);
+  z-index: 0;
+}
+
+.dialkit-choice-grid-button-text {
+  position: relative;
+  z-index: 1;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dial-text-label);
+  transition: color 0.15s;
+}
+
+.dialkit-choice-grid-button[data-active="true"] .dialkit-choice-grid-button-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dialkit-choice-grid-button[data-active="false"] .dialkit-choice-grid-button-text {
+  color: var(--dial-text-label);
+}
