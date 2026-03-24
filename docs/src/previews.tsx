@@ -15,6 +15,7 @@ import { TransitionControl } from '@dialkit/components/TransitionControl';
 import { SpringVisualization } from '@dialkit/components/SpringVisualization';
 import { EasingVisualization } from '@dialkit/components/EasingVisualization';
 import { ChoiceGrid } from '@dialkit/components/ChoiceGrid';
+import { Tabs } from '@dialkit/components/Tabs';
 import { PresetManager } from '@dialkit/components/PresetManager';
 import type { SpringConfig, TransitionConfig, EasingConfig } from '@dialkit/store/DialStore';
 
@@ -315,6 +316,53 @@ export function ChoiceGridPreview() {
           { value: 'figure8', label: 'Figure 8' },
           { value: 'scatter', label: 'Scatter' },
           { value: 'breathing', label: 'Breathing' },
+        ]}
+      />
+    </PreviewBox>
+  );
+}
+
+export function TabsPreview() {
+  const [opacity, setOpacity] = useState(0.85);
+  const [blur, setBlur] = useState(0.3);
+  const [speed, setSpeed] = useState(0.4);
+  const [bounce, setBounce] = useState(0.2);
+  const [bg, setBg] = useState('#6366f1');
+  const [fg, setFg] = useState('#ffffff');
+  return (
+    <PreviewBox>
+      <Tabs
+        tabs={[
+          {
+            id: 'layout',
+            label: 'Layout',
+            children: (
+              <>
+                <Slider label="Opacity" value={opacity} onChange={setOpacity} min={0} max={1} step={0.01} />
+                <Slider label="Blur" value={blur} onChange={setBlur} min={0} max={1} step={0.01} />
+              </>
+            ),
+          },
+          {
+            id: 'motion',
+            label: 'Motion',
+            children: (
+              <>
+                <Slider label="Speed" value={speed} onChange={setSpeed} min={0.1} max={2} step={0.05} />
+                <Slider label="Bounce" value={bounce} onChange={setBounce} min={0} max={1} step={0.01} />
+              </>
+            ),
+          },
+          {
+            id: 'colors',
+            label: 'Colors',
+            children: (
+              <>
+                <ColorControl label="Background" value={bg} onChange={setBg} />
+                <ColorControl label="Foreground" value={fg} onChange={setFg} />
+              </>
+            ),
+          },
         ]}
       />
     </PreviewBox>

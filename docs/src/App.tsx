@@ -66,6 +66,19 @@ const COMPONENTS: ComponentDoc[] = [
     ],
     preview: <previews.FolderPreview />,
   },
+  {
+    name: 'Tabs',
+    category: 'Core',
+    description:
+      'A tab bar that lets users switch between multiple named settings pages. Each tab renders its own children, with an animated sliding pill indicator and a smooth page-transition animation between panels.',
+    notes:
+      'Tabs compose well with any control — place `Folder`, `Slider`, `Toggle`, and other components directly as `children` of each tab definition.',
+    params: [
+      { name: 'tabs', type: 'Array<{ id: string; label: string; children: ReactNode }>', required: true, description: 'Ordered list of tab definitions. Each entry supplies a unique `id`, a display `label`, and the `children` rendered when that tab is active.' },
+      { name: 'defaultTab', type: 'string', required: false, description: 'The `id` of the tab that should be active on first render. Defaults to the first tab.' },
+    ],
+    preview: <previews.TabsPreview />,
+  },
 
   // ── Inputs ────────────────────────────────────────────────────────────────
   {

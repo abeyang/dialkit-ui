@@ -20,6 +20,8 @@ export { SelectControl } from './components/SelectControl';
 export { ColorControl } from './components/ColorControl';
 export { PresetManager } from './components/PresetManager';
 export { ChoiceGrid } from './components/ChoiceGrid';
+export { Tabs } from './components/Tabs';
+export type { TabItem } from './components/Tabs';
 
 // Store (for advanced usage)
 export { DialStore } from './store/DialStore';
