@@ -1,4 +1,4 @@
-import { useRef, useEffect, PointerEvent } from 'react';
+import { useRef, useEffect, PointerEvent as ReactPointerEvent } from 'react';
 
 interface TextareaControlProps {
   label: string;
@@ -38,7 +38,7 @@ export function TextareaControl({ label, value, onChange, placeholder, rows, res
     el.style.height = `${el.scrollHeight}px`;
   }, [value, rows, resizable]);
 
-  const handleResizePointerDown = (e: PointerEvent<HTMLDivElement>) => {
+  const handleResizePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     e.preventDefault();
     const el = textareaRef.current;
     if (!el) return;

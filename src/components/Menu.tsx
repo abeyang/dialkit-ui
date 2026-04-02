@@ -70,7 +70,7 @@ export function Menu<T extends string = string>({
                 </div>
 
                 <div className="dialkit-menu-item-actions">
-                  {(item.actions || (item.icon && [{ label: item.label, icon: item.icon, onClick: () => {} }]))?.map((action, idx) => (
+                  {(item.actions || (item.icon ? [{ label: item.label, icon: item.icon, onClick: () => {} } as MenuAction] : [])).map((action, idx) => (
                     <button
                       key={action.id || idx}
                       className="dialkit-menu-action"
