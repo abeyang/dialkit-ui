@@ -16,10 +16,13 @@ export { SpringVisualization } from './components/SpringVisualization';
 export { TransitionControl } from './components/TransitionControl';
 export { EasingVisualization } from './components/EasingVisualization';
 export { TextControl } from './components/TextControl';
+export { TextareaControl } from './components/TextareaControl';
 export { SelectControl } from './components/SelectControl';
 export { ColorControl } from './components/ColorControl';
 export { PresetManager } from './components/PresetManager';
 export { ChoiceGrid } from './components/ChoiceGrid';
+export { Menu } from './components/Menu';
+export type { MenuItem } from './components/Menu';
 export { Tabs } from './components/Tabs';
 export type { TabItem } from './components/Tabs';
 

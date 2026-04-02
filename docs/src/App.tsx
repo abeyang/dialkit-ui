@@ -162,6 +162,22 @@ const COMPONENTS: ComponentDoc[] = [
     preview: <previews.TextControlPreview />,
   },
   {
+    name: 'TextareaControl',
+    category: 'Controls',
+    description:
+      'A multi-line text input with a small-caps label stacked above an auto-growing textarea. Ideal for descriptions, notes, or any freeform paragraph content.',
+    notes:
+      'The textarea grows automatically as the user types (up to the natural content height). Pass `rows` to fix the height instead.',
+    params: [
+      { name: 'label', type: 'string', required: true, description: 'Label shown above the input in small caps.' },
+      { name: 'value', type: 'string', required: true, description: 'Current string value (controlled).' },
+      { name: 'onChange', type: '(value: string) => void', required: true, description: 'Called on every keystroke.' },
+      { name: 'placeholder', type: 'string', required: false, description: 'Placeholder text shown when the field is empty.' },
+      { name: 'rows', type: 'number', required: false, description: 'Fixed row count. Omit to enable auto-grow behaviour.' },
+    ],
+    preview: <previews.TextareaControlPreview />,
+  },
+  {
     name: 'ColorControl',
     category: 'Controls',
     description:
@@ -248,6 +264,23 @@ const COMPONENTS: ComponentDoc[] = [
       { name: 'onAdd', type: '() => void', required: true, description: 'Called when the user clicks the "add preset" button.' },
     ],
     preview: <previews.PresetManagerPreview />,
+  },
+
+  // ── Controls ────────────────────────────────────────────────────────────
+  {
+    name: 'Menu',
+    category: 'Controls',
+    description:
+      'A vertical list selector for picking a single item from a named collection. Supports an animated active state that slides between items, optional subtext beneath each label, and an optional right-side icon that fades in on hover and when active.',
+    notes:
+      'Only one item can be active at a time. The sliding pill uses a shared `layoutId` so it animates correctly within a single `Menu` instance.',
+    params: [
+      { name: 'items', type: 'Array<{ value: T; label: string; subtext?: string; icon?: ReactNode }>', required: true, description: 'List of selectable items. Each item needs at minimum a `value` and `label`.' },
+      { name: 'value', type: 'T', required: true, description: 'The currently active item value (controlled).' },
+      { name: 'onChange', type: '(value: T) => void', required: true, description: 'Called with the new value when the user clicks a different item.' },
+      { name: 'label', type: 'string', required: false, description: 'Optional section header shown above the item list in small caps.' },
+    ],
+    preview: <previews.MenuPreview />,
   },
 ];
 

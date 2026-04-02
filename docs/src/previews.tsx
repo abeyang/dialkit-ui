@@ -8,6 +8,7 @@ import { Toggle } from '@dialkit/components/Toggle';
 import { SegmentedControl } from '@dialkit/components/SegmentedControl';
 import { SelectControl } from '@dialkit/components/SelectControl';
 import { TextControl } from '@dialkit/components/TextControl';
+import { TextareaControl } from '@dialkit/components/TextareaControl';
 import { ColorControl } from '@dialkit/components/ColorControl';
 import { ButtonGroup } from '@dialkit/components/ButtonGroup';
 import { SpringControl } from '@dialkit/components/SpringControl';
@@ -17,6 +18,7 @@ import { EasingVisualization } from '@dialkit/components/EasingVisualization';
 import { ChoiceGrid } from '@dialkit/components/ChoiceGrid';
 import { Tabs } from '@dialkit/components/Tabs';
 import { PresetManager } from '@dialkit/components/PresetManager';
+import { Menu } from '@dialkit/components/Menu';
 import type { SpringConfig, TransitionConfig, EasingConfig } from '@dialkit/store/DialStore';
 
 // ── Module-level panel registrations ─────────────────────────────────────────
@@ -179,6 +181,21 @@ export function TextControlPreview() {
     <PreviewBox>
       <TextControl label="Name" value={name} onChange={setName} placeholder="Component name" />
       <TextControl label="Label" value={label} onChange={setLabel} placeholder="Button label" />
+    </PreviewBox>
+  );
+}
+
+export function TextareaControlPreview() {
+  const [notes, setNotes] = useState('');
+  return (
+    <PreviewBox>
+      <TextareaControl
+        label="Notes"
+        value={notes}
+        onChange={setNotes}
+        placeholder="Add a description or any longer-form notes here…"
+        resizable
+      />
     </PreviewBox>
   );
 }
@@ -362,6 +379,74 @@ export function TabsPreview() {
                 <ColorControl label="Foreground" value={fg} onChange={setFg} />
               </>
             ),
+          },
+        ]}
+      />
+    </PreviewBox>
+  );
+}
+
+// ── File icon SVG ─────────────────────────────────────────────────────────────
+function FileIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+    </svg>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  );
+}
+
+export function MenuPreview() {
+  const [active, setActive] = useState('file-1');
+  return (
+    <PreviewBox>
+      <Menu
+        label="Files"
+        value={active}
+        onChange={setActive}
+        items={[
+          {
+            value: 'file-1',
+            label: 'Document.pdf',
+            subtext: 'Modified today',
+            actions: [
+              { label: 'Edit', icon: <PencilIcon />, onClick: () => console.log('Edit file 1') },
+              { label: 'Delete', icon: <TrashIcon />, onClick: () => console.log('Delete file 1') },
+            ]
+          },
+          {
+            value: 'file-2',
+            label: 'Presentation.pptx',
+            subtext: 'Modified yesterday',
+            actions: [
+              { label: 'Edit', icon: <PencilIcon />, onClick: () => console.log('Edit file 2') },
+              { label: 'Delete', icon: <TrashIcon />, onClick: () => console.log('Delete file 2') },
+            ]
+          },
+          {
+            value: 'file-3',
+            label: 'Spreadsheet.xlsx',
+            subtext: 'Modified 3 days ago',
+            actions: [
+              { label: 'Edit', icon: <PencilIcon />, onClick: () => console.log('Edit file 3') },
+              { label: 'Delete', icon: <TrashIcon />, onClick: () => console.log('Delete file 3') },
+            ]
           },
         ]}
       />

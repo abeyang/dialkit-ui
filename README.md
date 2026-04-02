@@ -1,8 +1,12 @@
-# dialkit
+# Dialkit UI
 
-Real-time parameter tweaking for React, Solid, and Svelte.
+A component library for building rich parameter-control panels and inspector UIs in React apps. Dialkit UI provides a curated set of dark-themed, glassmorphic controls — sliders, toggles, selects, menus, color pickers, spring editors, and more — all designed to be composed inside application sidebars, settings panels, or developer tools.
 
-## Quick Start
+> **Note:** Dialkit UI also ships cross-framework bindings for Solid and Svelte via `dialkit/solid` and `dialkit/svelte`.
+
+---
+
+## Installation
 
 ```bash
 npm install dialkit motion
@@ -25,8 +29,13 @@ export default function Layout({ children }) {
 }
 ```
 
+---
+
+## useDialKit — Auto-panel from a config
+
+The fastest way to get a full control panel. Describe your parameters as a config object; Dialkit infers the control type and renders the panel automatically.
+
 ```tsx
-// component.tsx
 import { useDialKit } from 'dialkit';
 
 function Card() {
@@ -50,57 +59,42 @@ function Card() {
 }
 ```
 
----
-
-## useDialKit
-
 ```tsx
 const params = useDialKit(name, config, options?)
 ```
 
 | Param | Type | Description |
 |-------|------|-------------|
-| `name` | `string` | Panel title displayed in the UI |
+| `name` | `string` | Panel title shown in the UI |
 | `config` | `DialConfig` | Parameter definitions (see Control Types below) |
 | `options.onAction` | `(path: string) => void` | Callback when action buttons are clicked |
 
-Returns a fully typed object matching your config shape with live values. Updating a control in the UI immediately updates the returned values.
+Returns a fully typed object matching your config shape with live values.
 
 ---
 
-## Control Types
+## Control Types (via useDialKit)
 
 ### Slider
 
-Numbers create sliders. There are three ways to define them:
+Numbers create sliders.
 
-**Explicit range** — `[default, min, max]`:
 ```tsx
-blur: [24, 0, 100]
+blur: [24, 0, 100]          // [default, min, max]
+blur: [24, 0, 100, 5]       // with step
+scale: 1.2                   // bare number — range auto-inferred
 ```
-
-**Explicit range + step** — `[default, min, max, step]`:
-```tsx
-blur: [24, 0, 100, 5]    // snaps in increments of 5
-```
-When `step` is omitted, it's inferred from the range (see table below).
-
-**Auto-inferred** — bare number:
-```tsx
-scale: 1.2
-```
-A single number auto-infers a reasonable min, max, and step:
 
 | Value range | Inferred min/max | Step |
 |-------------|-----------------|------|
 | 0–1 | 0 to 1 | 0.01 |
-| 0–10 | 0 to value &times; 3 | 0.1 |
-| 0–100 | 0 to value &times; 3 | 1 |
-| 100+ | 0 to value &times; 3 | 10 |
+| 0–10 | 0 to value × 3 | 0.1 |
+| 0–100 | 0 to value × 3 | 1 |
+| 100+ | 0 to value × 3 | 10 |
+
+Sliders support click-to-snap (with spring animation), drag with rubber-band overflow, and direct text editing.
 
 **Returns:** `number`
-
-Sliders support click-to-snap (with spring animation), drag with rubber-band overflow, and direct text editing (hover the value for 800ms, then click to type).
 
 ### Toggle
 
@@ -116,22 +110,22 @@ Booleans create an Off/On segmented control.
 ### Text
 
 ```tsx
-title: 'Hello'                                    // auto-detected from string
+title: 'Hello'
 subtitle: { type: 'text', default: '', placeholder: 'Enter subtitle...' }
 ```
 
-Non-hex strings are auto-detected as text inputs. Use the explicit form for a placeholder or to set a default.
+Non-hex strings are auto-detected as single-line text inputs.
 
 **Returns:** `string`
 
 ### Color
 
 ```tsx
-color: '#ff5500'                           // auto-detected from hex string
+color: '#ff5500'                           // auto-detected
 bg: { type: 'color', default: '#000' }     // explicit
 ```
 
-Hex strings (`#RGB`, `#RRGGBB`, `#RRGGBBAA`) are auto-detected as color pickers. Each color control has a text display (click to edit the hex value), and a swatch button that opens the native color picker.
+Hex strings (`#RGB`, `#RRGGBB`, `#RRGGBBAA`) render a hex editor and a native color-picker swatch.
 
 **Returns:** `string` (hex color)
 
@@ -145,51 +139,23 @@ layout: {
 }
 ```
 
-Options can be plain strings or `{ value, label }` objects for custom display text:
+Options can be plain strings or `{ value, label }` objects. Renders as a full-width dropdown.
 
-```tsx
-shape: {
-  type: 'select',
-  options: [
-    { value: 'portrait', label: 'Portrait' },
-    { value: 'square', label: 'Square' },
-    { value: 'landscape', label: 'Landscape' },
-  ],
-  default: 'portrait',
-}
-```
-
-If `default` is omitted, the first option is selected.
-
-**Returns:** `string` (the selected option's value)
+**Returns:** `string`
 
 ### Spring
 
 ```tsx
-// Time-based (simple mode)
+// Time-based
 spring: { type: 'spring', visualDuration: 0.3, bounce: 0.2 }
 
-// Physics-based (advanced mode)
+// Physics-based
 spring: { type: 'spring', stiffness: 200, damping: 25, mass: 1 }
 ```
 
-Creates a visual spring editor with a live animation curve preview. The editor supports two modes, toggled in the UI:
+A visual spring editor with live curve preview. Pass the returned value directly to Motion's `transition` prop.
 
-- **Time** (simple) — `visualDuration` (0.1–1s) and `bounce` (0–1). Ideal for most animations.
-- **Physics** (advanced) — `stiffness` (1–1000), `damping` (1–100), and `mass` (0.1–10). Full control over spring dynamics.
-
-The returned config object is passed directly to Motion's `transition` prop:
-
-```tsx
-const p = useDialKit('Card', {
-  spring: { type: 'spring', visualDuration: 0.5, bounce: 0.04 },
-  x: [0, -200, 200],
-});
-
-<motion.div animate={{ x: p.x }} transition={p.spring} />
-```
-
-**Returns:** `SpringConfig` (pass directly to Motion)
+**Returns:** `SpringConfig`
 
 ### Action
 
@@ -205,44 +171,22 @@ const p = useDialKit('Controls', {
 });
 ```
 
-Action buttons trigger callbacks without storing any value. The `label` defaults to the formatted key name (camelCase becomes Title Case). Multiple adjacent actions are grouped vertically.
-Action buttons can be placed at the root or nested inside folders.
+Trigger callbacks without storing any value.
 
 ### Folder
 
-Any nested plain object becomes a collapsible folder. Folders can nest arbitrarily deep.
+Nested plain objects become collapsible folders.
 
 ```tsx
 shadow: {
   blur: [10, 0, 50],
   opacity: [0.25, 0, 1],
   color: '#000000',
-}
-
-// Access nested values:
-params.shadow.blur     // number
-params.shadow.color    // string
-```
-
-Folders are open by default. Add `_collapsed: true` to start a folder closed. This is a reserved metadata key — it controls the UI only and won't appear in your returned values.
-
-```tsx
-shadow: {
-  _collapsed: true,    // folder starts closed
-  blur: [10, 0, 50],
-  opacity: [0.25, 0, 1],
+  _collapsed: true,   // starts closed (reserved metadata key)
 }
 ```
 
-DialKit also supports dynamic config updates. If your config shape, defaults, options, or labels change over time, the panel updates while preserving current values where paths still exist.
-
-Dynamic configs work with both inline objects and memoized configs — no special consumer action needed:
-
-```tsx
-const values = useDialKit('Controls', {
-  style: { type: 'select', options: dynamicOptions },
-});
-```
+Access nested values as `params.shadow.blur`, etc.
 
 ---
 
@@ -253,178 +197,269 @@ const values = useDialKit('Controls', {
 ```
 
 | Prop | Type | Default |
-|------|------|---------|
+|------|------|---------| 
 | `position` | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` |
 | `defaultOpen` | `boolean` | `true` |
 | `mode` | `'popover' \| 'inline'` | `'popover'` |
 
-Mount once at your app root. In the default `popover` mode, the panel renders via a portal on `document.body`. It collapses to a small icon button and expands to 280px wide on click.
-
-### Inline mode
-
-Use `mode="inline"` to render DialKit directly in your layout instead of as a floating popover. The panel fills its container and scrolls internally, which is useful for embedding in a sidebar or resizable panel. Inline mode works across all frameworks:
-
-**React:**
-```tsx
-<aside style={{ width: 300, height: '100vh', overflow: 'hidden' }}>
-  <DialRoot mode="inline" />
-</aside>
-```
-
-**Solid:**
-```tsx
-<aside style={{ width: '300px', height: '100vh', overflow: 'hidden' }}>
-  <DialRoot mode="inline" />
-</aside>
-```
-
-**Svelte:**
-```svelte
-<aside style:width="300px" style:height="100vh" style:overflow="hidden">
-  <DialRoot mode="inline" />
-</aside>
-```
-
-In inline mode, the `position` prop is ignored and the collapse-to-icon behavior is disabled.
+Mount once at your app root. In `inline` mode, the panel fills its container — useful for sidebars.
 
 ---
 
-## Panel Toolbar
+## Individual Components
 
-When the panel is open, the toolbar provides:
-
-- **Presets** — A version dropdown for saving and loading parameter snapshots. Click "+" to save the current state as a new version. Select a version to load it. Changes auto-save to the active version. "Version 1" always represents the original defaults.
-- **Copy** — Exports the current values as JSON to your clipboard.
-
----
-
-## Full Example
+All controls are also exported individually for use outside the auto-panel system. Import and compose them directly in your own UI.
 
 ```tsx
-import { useDialKit } from 'dialkit';
-import { motion } from 'motion/react';
+import 'dialkit/styles.css';
+import {
+  Slider,
+  Toggle,
+  TextControl,
+  TextareaControl,
+  SelectControl,
+  ColorControl,
+  ChoiceGrid,
+  ButtonGroup,
+  Tabs,
+  Menu,
+  SpringControl,
+  TransitionControl,
+  PresetManager,
+  Folder,
+} from 'dialkit';
+```
 
-function PhotoStack() {
-  const p = useDialKit('Photo Stack', {
-    // Text inputs
-    title: 'Japan',
-    subtitle: { type: 'text', default: 'December 2025', placeholder: 'Enter subtitle...' },
+### Slider
 
-    // Color pickers
-    accentColor: '#c41e3a',
-    shadowTint: { type: 'color', default: '#000000' },
+```tsx
+<Slider label="Blur" value={blur} onChange={setBlur} min={0} max={100} step={1} />
+```
 
-    // Select dropdown
-    layout: { type: 'select', options: ['stack', 'fan', 'grid'], default: 'stack' },
+### Toggle
 
-    // Grouped sliders in a folder
-    backPhoto: {
-      offsetX: [239, 0, 400],
-      offsetY: [0, 0, 150],
-      scale: [0.7, 0.5, 0.95],
-      overlayOpacity: [0.6, 0, 1],
+```tsx
+<Toggle label="Dark Mode" value={dark} onChange={setDark} />
+```
+
+### TextControl
+
+Single-line text input. Label on the left, input on the right.
+
+```tsx
+<TextControl label="Name" value={name} onChange={setName} placeholder="Component name" />
+```
+
+| Prop | Type | Required |
+|------|------|----------|
+| `label` | `string` | ✓ |
+| `value` | `string` | ✓ |
+| `onChange` | `(value: string) => void` | ✓ |
+| `placeholder` | `string` | — |
+
+### TextareaControl
+
+Multi-line text input for paragraph/long-form content. Stacked label above textarea.
+
+```tsx
+<TextareaControl
+  label="Notes"
+  value={notes}
+  onChange={setNotes}
+  placeholder="Add a description…"
+  resizable
+/>
+```
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | ✓ | |
+| `value` | `string` | ✓ | |
+| `onChange` | `(value: string) => void` | ✓ | |
+| `placeholder` | `string` | — | |
+| `rows` | `number` | — | Fixed row count. Omit to enable auto-grow. |
+| `resizable` | `boolean` | — | Shows a custom drag handle for manual resizing. Disables auto-grow. |
+
+### SelectControl
+
+Full-width dropdown with a portalled list.
+
+```tsx
+<SelectControl
+  label="Layout"
+  value={layout}
+  onChange={setLayout}
+  options={[
+    { value: 'stack', label: 'Stack' },
+    { value: 'grid', label: 'Grid' },
+  ]}
+/>
+```
+
+### ColorControl
+
+```tsx
+<ColorControl label="Accent" value={color} onChange={setColor} />
+```
+
+### ChoiceGrid
+
+A 2-column grid of radio-style buttons with an animated active pill.
+
+```tsx
+<ChoiceGrid
+  label="Alignment"
+  value={align}
+  onChange={setAlign}
+  options={[
+    { value: 'left', label: 'Left' },
+    { value: 'center', label: 'Center' },
+    { value: 'right', label: 'Right' },
+    { value: 'justify', label: 'Justify' },
+  ]}
+/>
+```
+
+### Tabs
+
+Tabbed container with animated indicator and content transitions.
+
+```tsx
+<Tabs
+  tabs={[
+    { id: 'layout', label: 'Layout', children: <LayoutControls /> },
+    { id: 'motion', label: 'Motion', children: <MotionControls /> },
+  ]}
+/>
+```
+
+### Menu
+
+A vertical list selector for picking a single item (e.g. files, scenes, layers). Supports an animated active pill, optional subtext, and per-item clickable action buttons.
+
+```tsx
+<Menu
+  label="Files"
+  value={activeFile}
+  onChange={setActiveFile}
+  items={[
+    {
+      value: 'doc',
+      label: 'Document.pdf',
+      subtext: 'Modified today',
+      actions: [
+        { label: 'Edit', icon: <PencilIcon />, onClick: (e) => handleEdit(e) },
+        { label: 'Delete', icon: <TrashIcon />, onClick: (e) => handleDelete(e) },
+      ],
     },
-
-    // Spring config for Motion
-    transitionSpring: { type: 'spring', visualDuration: 0.5, bounce: 0.04 },
-
-    // Toggle
-    darkMode: false,
-
-    // Action buttons
-    next: { type: 'action' },
-    previous: { type: 'action' },
-  }, {
-    onAction: (action) => {
-      if (action === 'next') goNext();
-      if (action === 'previous') goPrevious();
+    {
+      value: 'slides',
+      label: 'Presentation.pptx',
+      subtext: 'Modified yesterday',
     },
-  });
+  ]}
+/>
+```
 
-  return (
-    <motion.div
-      animate={{ x: p.backPhoto.offsetX }}
-      transition={p.transitionSpring}
-      style={{ color: p.accentColor }}
-    >
-      <h1>{p.title}</h1>
-      <p>{p.subtitle}</p>
-    </motion.div>
-  );
-}
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `MenuItem[]` | ✓ | List of selectable items |
+| `value` | `string` | ✓ | Currently active item value (controlled) |
+| `onChange` | `(value: string) => void` | ✓ | Called when a new item is selected |
+| `label` | `string` | — | Optional section header above the list |
+
+**`MenuItem`**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `value` | `string` | Unique identifier |
+| `label` | `string` | Primary display text |
+| `subtext` | `string` | Optional secondary text beneath the label |
+| `actions` | `MenuAction[]` | Optional clickable icon buttons on the right (fade in on hover/active) |
+
+**`MenuAction`**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `icon` | `ReactNode` | Button content (typically an SVG icon) |
+| `label` | `string` | Accessible label / tooltip text |
+| `onClick` | `(e: MouseEvent) => void` | Click handler — event propagation is automatically stopped |
+| `id` | `string` | Optional key for stable rendering |
+
+### ButtonGroup
+
+A row of segmented buttons. Optionally displays icons.
+
+```tsx
+<ButtonGroup
+  label="View"
+  value={view}
+  onChange={setView}
+  options={[
+    { value: 'list', label: 'List' },
+    { value: 'grid', label: 'Grid' },
+  ]}
+/>
+```
+
+### SpringControl / TransitionControl
+
+Visual spring and easing editors. See `SpringConfig` and `TransitionConfig` types.
+
+### PresetManager
+
+A toolbar dropdown for saving and loading named parameter snapshots.
+
+```tsx
+<PresetManager
+  panelId="my-panel"
+  presets={presets}
+  activePresetId={activeId}
+  onAdd={handleAddPreset}
+/>
+```
+
+### Folder
+
+Collapsible folder container for grouping controls.
+
+```tsx
+<Folder label="Shadow" defaultOpen>
+  <Slider label="Blur" value={blur} onChange={setBlur} min={0} max={50} />
+  <ColorControl label="Color" value={color} onChange={setColor} />
+</Folder>
 ```
 
 ---
 
 ## Solid
 
-DialKit also works with Solid. Import from `dialkit/solid` instead of `dialkit` — the API mirrors the React version, with `createDialKit` replacing `useDialKit` and `DialRoot` as a Solid component.
-
 ```bash
 npm install dialkit solid-js
 ```
 
 ```tsx
-// App.tsx
-import { DialRoot } from 'dialkit/solid';
+import { DialRoot, createDialKit } from 'dialkit/solid';
 import 'dialkit/styles.css';
-
-export default function App() {
-  return (
-    <>
-      <MyComponent />
-      <DialRoot />
-    </>
-  );
-}
-```
-
-```tsx
-// component.tsx
-import { createDialKit } from 'dialkit/solid';
 
 function Card() {
   const params = createDialKit('Card', {
     blur: [24, 0, 100],
-    scale: 1.2,
     color: '#ff5500',
-    visible: true,
   });
 
-  return (
-    <div style={{
-      filter: `blur(${params().blur}px)`,
-      transform: `scale(${params().scale})`,
-      color: params().color,
-      opacity: params().visible ? 1 : 0,
-    }}>
-      ...
-    </div>
-  );
+  return <div style={{ filter: `blur(${params().blur}px)` }}>...</div>;
 }
 ```
 
-`createDialKit` returns an accessor — call `params()` to read the current values. All control types, config shapes, and panel features (presets, copy, folders) work identically to the React version.
+`createDialKit` returns an accessor — call `params()` to read live values.
 
 ---
 
 ## Svelte
 
-DialKit works with Svelte 5 (≥5.8.0). Import from `dialkit/svelte` — no extra dependencies needed.
-
 ```bash
 npm install dialkit
-```
-
-```svelte
-<!-- +layout.svelte -->
-<script>
-  import { DialRoot } from 'dialkit/svelte';
-  let { children } = $props();
-</script>
-
-{@render children()}
-<DialRoot />
 ```
 
 ```svelte
@@ -434,28 +469,24 @@ npm install dialkit
 
   const params = createDialKit('Card', {
     blur: [24, 0, 100],
-    scale: 1.2,
     color: '#ff5500',
-    visible: true
   });
 </script>
 
-<div style:filter={`blur(${params.blur}px)`} style:color={params.color}>
-  ...
-</div>
+<div style:filter={`blur(${params.blur}px)`}>...</div>
 ```
 
-`createDialKit` returns a reactive object — access values directly (e.g. `params.blur`). Styles are injected automatically by `DialRoot` (no CSS import needed). Cleanup is automatic when the component unmounts. All control types, presets, folders, and transitions match the React/Solid entries.
+`createDialKit` returns a reactive object — access values directly. Styles are injected automatically by `DialRoot` (no CSS import needed).
 
 ---
 
 ## Types
 
-All config and value types are exported:
-
 ```tsx
 import type {
   SpringConfig,
+  EasingConfig,
+  TransitionConfig,
   ActionConfig,
   SelectConfig,
   ColorConfig,
@@ -466,10 +497,11 @@ import type {
   ControlMeta,
   PanelConfig,
   Preset,
+  MenuItem,
+  MenuAction,
+  TabItem,
 } from 'dialkit';
 ```
-
-Return values are fully typed: `params.blur` infers as `number`, `params.color` as `string`, `params.spring` as `SpringConfig`, `params.shadow` as a nested object, etc.
 
 ---
 
